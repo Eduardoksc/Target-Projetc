@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cargando...</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a1a1a; /* Color base inicial */
+      color: white;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 90vh;
+      transition: background-color 0.5s;
+    }
+    .container {
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      display: none; /* Se oculta hasta que carguen los datos */
+    }
+    .spinner {
+      border: 4px solid rgba(255,255,255,0.1);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border-left-color: #ffffff;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    h1 { font-size: 24px; margin-bottom: 30px; }
+    .btn {
+      display: block;
+      background-color: #ffffff;
+      color: #1a1a1a;
+      text-decoration: none;
+      padding: 15px 20px;
+      margin: 15px 0;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .btn-google { background-color: #4285F4; color: white; }
+    .btn-whatsapp { background-color: #25D366; color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- Pantalla de carga ultra rápida -->
+  <div id="loader" class="spinner"></div>
+
+  <!-- Contenedor principal de botones -->
+  <div class="container" id="app">
+    <h1 id="txt-nombre">¡Bienvenido!</h1>
+    <a id="lnk-google" href="#" class="btn btn-google" target="_blank">⭐ Califícanos en Google</a>
+    <a id="lnk-catalogo" href="#" class="btn" target="_blank">📋 Ver Nuestro Catálogo</a>
+    <a id="lnk-whatsapp" href="#" class="btn btn-whatsapp" target="_blank">💬 Pedidos por WhatsApp</a>
+  </div>
+
+  <script>
+    // 1. Capturar el ID desde la URL de GitHub (ej: tuweb.github.io/?id=demo)
+    const urlParams = new URLSearchParams(window.location.search);
+    const idNegocio = urlParams.get('id') || 'demo';
+
+    // 2. PEGA AQUÍ TU URL COMPLETA DE GOOGLE APPS SCRIPT (CONSERVA LAS COMILLAS)
+    const urlApi = "TU_URL_DE_APPS_SCRIPT_AQUÍ?id=" + idNegocio;
+
+    // 3. Consultar la API en segundo plano
+    fetch(urlApi)
+      .then(response => response.json())
+      .then(data => {
+        // Asignar dinámicamente los datos al HTML
+        document.title = data.nombre;
+        document.body.style.backgroundColor = data.color;
+        document.getElementById('txt-nombre').innerHTML = `¡Bienvenido a <br><strong>${data.nombre}</strong>!`;
+        document.getElementById('lnk-google').href = data.linkGoogle;
+        document.getElementById('lnk-catalogo').href = data.linkCatalogo;
+        document.getElementById('lnk-whatsapp').href = data.linkWhatsapp;
+
+        // Intercambiar la pantalla de carga por los botones
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+      })
+      .catch(error => {
+        console.error("Error cargando el negocio:", error);
+        document.getElementById('txt-nombre').innerText = "Error al cargar los datos.";
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+      });
+  </script>
+</body>
+</html>

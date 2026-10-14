@@ -69,7 +69,7 @@
     const idNegocio = urlParams.get('id') || 'demo';
 
     // 2. PEGA AQUÍ TU URL COMPLETA DE GOOGLE APPS SCRIPT (CONSERVA LAS COMILLAS)
-    const urlApi = "https://script.google.com/macros/s/AKfycbzC58u-RD1iuekBHVibDPAKmL371LiHs29fM6lrCJa65ixEiW225rnmL33c8X7xyqcIVg/exec" + idNegocio;
+    const urlApi = "https://script.google.com/macros/s/AKfycbzC58u-RD1iuekBHVibDPAKmL371LiHs29fM6lrCJa65ixEiW225rnmL33c8X7xyqcIVg/exec?id=" + idNegocio;
 
     // 3. Consultar la API en segundo plano
     fetch(urlApi)

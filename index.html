@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #1a1a1a; /* Color base inicial */
+      background-color: #1a1a1a;
       color: white;
       margin: 0;
       padding: 20px;
@@ -22,7 +22,7 @@
       width: 100%;
       max-width: 400px;
       text-align: center;
-      display: none; /* Se oculta hasta que carguen los datos */
+      display: none;
     }
     .spinner {
       border: 4px solid rgba(255,255,255,0.1);
@@ -52,10 +52,8 @@
 </head>
 <body>
 
-  <!-- Pantalla de carga ultra rápida -->
   <div id="loader" class="spinner"></div>
 
-  <!-- Contenedor principal de botones -->
   <div class="container" id="app">
     <h1 id="txt-nombre">¡Bienvenido!</h1>
     <a id="lnk-google" href="#" class="btn btn-google" target="_blank">⭐ Califícanos en Google</a>
@@ -64,18 +62,19 @@
   </div>
 
   <script>
-    // 1. Capturar el ID desde la URL de GitHub (ej: tuweb.github.io/?id=demo)
     const urlParams = new URLSearchParams(window.location.search);
     const idNegocio = urlParams.get('id') || 'demo';
 
-    // 2. PEGA AQUÍ TU URL COMPLETA DE GOOGLE APPS SCRIPT (CONSERVA LAS COMILLAS)
-    const urlApi = "https://script.google.com/macros/library/d/1VQuNS1VzKIOc0e8K9qJ2WvegX4dyH4q2yVxbo6cVIxJFxetQ5DTxe4xw/7?id=" + idNegocio;
+    // Tu URL exacta y corregida con el parámetro pegado de forma estricta
+    const urlApi = "https://google.com" + idNegocio;
 
-    // 3. Consultar la API en segundo plano
-    fetch(urlApi)
-      .then(response => response.json())
+    // Ejecutamos la consulta forzando al navegador a seguir las redirecciones de Google
+    fetch(urlApi, { method: "GET", redirect: "follow" })
+      .then(response => {
+        if (!response.ok) throw new Error("Error en respuesta de red");
+        return response.json();
+      })
       .then(data => {
-        // Asignar dinámicamente los datos al HTML
         document.title = data.nombre;
         document.body.style.backgroundColor = data.color;
         document.getElementById('txt-nombre').innerHTML = `¡Bienvenido a <br><strong>${data.nombre}</strong>!`;
@@ -83,13 +82,12 @@
         document.getElementById('lnk-catalogo').href = data.linkCatalogo;
         document.getElementById('lnk-whatsapp').href = data.linkWhatsapp;
 
-        // Intercambiar la pantalla de carga por los botones
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
       })
       .catch(error => {
-        console.error("Error cargando el negocio:", error);
-        document.getElementById('txt-nombre').innerText = "Error al cargar los datos.";
+        console.error("Detalle del error:", error);
+        document.getElementById('txt-nombre').innerHTML = "Error al conectar con la base de datos.<br><small>Revisa que el ID exista en tu Excel.</small>";
         document.getElementById('loader').style.display = 'none';
         document.getElementById('app').style.display = 'block';
       });
